@@ -1,0 +1,2204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>900</width>
+    <height>650</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Hotel Reservation System</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">
+/* Widget Styles */
+QWidget 
+{
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 10pt;
+    color: 
+#333333;
+}
+
+/* Group Box Styles */
+QGroupBox 
+{
+    border: 1px solid 
+#cccccc;
+    border-radius: 5px;
+    margin-top: 10px;
+    padding-top: 15px;
+    background-color: 
+#ffffff;
+}
+
+QGroupBox::title 
+{
+    subcontrol-origin: margin;
+    subcontrol-position: top center;
+    padding: 0 10px;
+    background-color: 
+#4a86e8;
+    color: white;
+    border-radius: 3px;
+}
+
+/* Button Styles */
+QPushButton {
+    background-color: 
+#707c90;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 12px;
+    min-width: 80px;
+}
+
+QPushButton:hover {
+    background-color: 
+#3a76d8;
+}
+
+QPushButton:pressed {
+    background-color: 
+#2a66c8;
+}
+
+QPushButton#deleteButton {
+    background-color: 
+#e74c3c;
+}
+
+QPushButton#deleteButton:hover {
+    background-color: 
+#d73c2c;
+}
+
+QPushButton#clearButton {
+    background-color: 
+#95a5a6;
+}
+
+QPushButton#clearButton:hover {
+    background-color: 
+#7f8c8d;
+}
+
+/* Enhanced ComboBox Style */
+QComboBox {
+    border: 1px solid #d0d0d0;
+    border-radius: 4px;
+    padding: 5px 10px;
+    background-color: white;
+    min-width: 100px;
+    selection-background-color: #4a86e8;
+}
+
+QComboBox:hover {
+    border-color: #b0b0b0;
+}
+
+QComboBox:focus {
+    border: 1px solid #4a86e8;
+    box-shadow: 0 0 0 2px rgba(74, 134, 232, 0.2);
+}
+
+QComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+    width: 20px;
+    border-left: 1px solid #d0d0d0;
+    border-radius: 0 4px 4px 0;
+}
+
+QComboBox::down-arrow {
+    image: url(:/icons/down_arrow.svg);
+    width: 10px;
+    height: 10px;
+}
+
+QComboBox QAbstractItemView {
+    border: 1px solid #d0d0d0;
+    border-radius: 4px;
+    background-color: white;
+    selection-background-color: #4a86e8;
+    selection-color: white;
+    outline: none;
+    margin: 2px 0 0 0; /* prevent overlap with main widget */
+    padding: 4px;
+}
+
+/* Enhanced List/Table Selection Style */
+QListView, QTableView, QListWidget, QTreeView {
+    border: 1px solid #d0d0d0;
+    border-radius: 4px;
+    background-color: white;
+    alternate-background-color: #f8f8f8;
+    outline: none; /* remove focus rectangle */
+}
+
+
+QListView::item:hover, QListWidget::item:hover,
+QTableView::item:hover, QTreeView::item:hover {
+    background-color: #e8f0fe;
+}
+
+QListView::item:selected, QListWidget::item:selected,
+QTableView::item:selected, QTreeView::item:selected {
+    background-color: #4a86e8;
+    color: white;
+    border-radius: 2px;
+}
+
+/* Modern Scrollbar for all widgets */
+QScrollBar:vertical {
+    border: none;
+    background: #f5f5f5;
+    width: 10px;
+    margin: 0px 0px 0px 0px;
+}
+
+QScrollBar::handle:vertical {
+    background: #c0c0c0;
+    min-height: 20px;
+    border-radius: 5px;
+}
+
+QScrollBar::handle:vertical:hover {
+    background: #a0a0a0;
+}
+
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    height: 0px;
+    background: none;
+}
+
+QScrollBar:horizontal {
+    border: none;
+    background: #f5f5f5;
+    height: 10px;
+    margin: 0px 0px 0px 0px;
+}
+
+QScrollBar::handle:horizontal {
+    background: #c0c0c0;
+    min-width: 20px;
+    border-radius: 5px;
+}
+
+/* Enhanced Dropdown Menu */
+QMenu {
+    border: 1px solid #d0d0d0;
+    border-radius: 4px;
+    padding: 4px;
+    background-color: white;
+    color: #333333;
+}
+
+QMenu::item {
+    padding: 5px 20px 5px 10px;
+    border-radius: 2px;
+}
+
+QMenu::item:selected {
+    background-color: #4a86e8;
+    color: white;
+}
+
+QMenu::separator {
+    height: 1px;
+    background-color: #e0e0e0;
+    margin: 4px 0;
+}
+
+/* Checkbox and Radio Button Styles */
+QCheckBox, QRadioButton {
+    spacing: 5px;
+}
+
+QCheckBox::indicator, QRadioButton::indicator {
+    width: 15px;
+    height: 15px;
+}
+
+QCheckBox::indicator:unchecked, QRadioButton::indicator:unchecked {
+    border: 1px solid 
+#cccccc;
+    background-color: white;
+}
+
+QCheckBox::indicator:checked, QRadioButton::indicator:checked {
+    background-color: 
+#4a86e8;
+    border: 1px solid 
+#4a86e8;
+}
+
+/* Status Bar Style */
+QStatusBar {
+    background-color: 
+#f0f0f0;
+    color: 
+#555555;
+}
+
+/* Label Styles */
+QLabel {
+    color: 
+#555555;
+}
+
+/* Priority High/Urgent Style */
+QLabel#priorityHighLabel {
+    color: 
+#e74c3c;
+    font-weight: bold;
+}
+
+/* Scroll Bar Styles */
+QScrollBar:vertical {
+    border: none;
+    background: 
+#f0f0f0;
+    width: 8px;
+    margin: 0px 0px 0px 0px;
+}
+
+QScrollBar::handle:vertical {
+    background: 
+#cccccc;
+    min-height: 20px;
+    border-radius: 4px;
+}
+
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    height: 0px;
+}
+   </string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <property name="locale">
+       <locale language="English" country="UnitedStates"/>
+      </property>
+<widget class="QWidget" name="tab_reservations">
+       <attribute name="title">
+        <string>Reservations</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <widget class="QGroupBox" name="searchGroupBox">
+          <property name="title">
+           <string>Search Reservations</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_5">
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout">
+             <item>
+              <widget class="QLabel" name="label">
+               <property name="text">
+                <string>Search by:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QComboBox" name="searchTypeComboBox">
+               <item>
+                <property name="text">
+                 <string>All Fields</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Reservation ID</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Guest Name</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Room Number</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Country</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Phone</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Email</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Check-in Date</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Check-out Date</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Status</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="searchLineEdit">
+               <property name="placeholderText">
+                <string>Enter search terms...</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="dateRangeLabel">
+               <property name="text">
+                <string>Date Range:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QDateEdit" name="fromDateEdit">
+               <property name="calendarPopup">
+                <bool>true</bool>
+               </property>
+               <property name="locale">
+                <locale language="English" country="UnitedStates"/>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="toLabel">
+               <property name="text">
+                <string>to</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignmentFlag::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QDateEdit" name="toDateEdit">
+               <property name="calendarPopup">
+                <bool>true</bool>
+               </property>
+               <property name="locale">
+                <locale language="English" country="UnitedStates"/>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="searchButton">
+               <property name="text">
+                <string>Search</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="resetButton">
+               <property name="text">
+                <string>Reset</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="advancedSearchLayout">
+             <item>
+              <widget class="QCheckBox" name="advancedSearchCheckBox">
+               <property name="text">
+                <string>Advanced Search</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="roomTypeLabel">
+               <property name="text">
+                <string>Room Type:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QComboBox" name="roomTypeFilterComboBox">
+               <item>
+                <property name="text">
+                 <string>All Types</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Standard Single</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Standard Double</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Deluxe King</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Deluxe Double</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Junior Suite</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Executive Suite</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Presidential Suite</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="statusFilterLabel">
+               <property name="text">
+                <string>Status:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QComboBox" name="statusFilterComboBox">
+               <item>
+                <property name="text">
+                 <string>All Statuses</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Confirmed</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Pending</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Checked-in</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Completed</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Cancelled</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="countryFilterLabel">
+               <property name="text">
+                <string>Country:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QComboBox" name="countryFilterComboBox">
+               <property name="editable">
+                <bool>true</bool>
+               </property>
+               <item>
+                <property name="text">
+                 <string>All Countries</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_3">
+               <property name="orientation">
+                <enum>Qt::Orientation::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QPushButton" name="addReservationButton">
+               <property name="text">
+                <string>Add Reservation</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSplitter" name="mainSplitter">
+          <property name="orientation">
+           <enum>Qt::Orientation::Vertical</enum>
+          </property>
+          <widget class="QTableView" name="reservationsTableView">
+           <property name="selectionMode">
+            <enum>QAbstractItemView::SelectionMode::SingleSelection</enum>
+           </property>
+           <property name="selectionBehavior">
+            <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
+           </property>
+           <property name="sortingEnabled">
+            <bool>true</bool>
+           </property>
+          </widget>
+<widget class="QWidget" name="statsContainer">
+  <layout class="QVBoxLayout" name="statsLayout">
+    <property name="spacing">
+      <number>8</number>
+    </property>
+    <property name="leftMargin">
+      <number>10</number>
+    </property>
+    <property name="topMargin">
+      <number>10</number>
+    </property>
+    <property name="rightMargin">
+      <number>10</number>
+    </property>
+    <property name="bottomMargin">
+      <number>10</number>
+    </property>
+    <item>
+      <widget class="QGroupBox" name="statsGroupBox">
+        <property name="title">
+          <string>Reservation Statistics</string>
+        </property>
+        <property name="styleSheet">
+          <string>
+            QGroupBox {
+              font-size: 12pt;
+              font-weight: bold;
+              color: #2c3e50;
+              border: 1px solid #bdc3c7;
+              border-radius: 5px;
+              margin-top: 12px;
+              padding-top: 12px;
+            }
+            QGroupBox::title {
+              subcontrol-origin: margin;
+              subcontrol-position: top left;
+              padding: 0 8px;
+              background-color: transparent;
+            }
+          </string>
+        </property>
+        <layout class="QVBoxLayout" name="statsBoxLayout">
+          <property name="spacing">
+            <number>8</number>
+          </property>
+          <property name="leftMargin">
+            <number>12</number>
+          </property>
+          <property name="topMargin">
+            <number>12</number>
+          </property>
+          <property name="rightMargin">
+            <number>12</number>
+          </property>
+          <property name="bottomMargin">
+            <number>12</number>
+          </property>
+          <item>
+            <widget class="QScrollArea" name="statsScrollArea">
+              <property name="widgetResizable">
+                <bool>true</bool>
+              </property>
+              <property name="frameShape">
+                <enum>QFrame::NoFrame</enum>
+              </property>
+              <widget class="QWidget" name="scrollAreaWidgetContents">
+                <property name="geometry">
+                  <rect>
+                    <x>0</x>
+                    <y>0</y>
+                    <width>500</width>
+                    <height>160</height>
+                  </rect>
+                </property>
+                <layout class="QVBoxLayout" name="scrollAreaLayout">
+                  <item>
+                    <layout class="QGridLayout" name="statsSummaryGrid">
+                      <property name="horizontalSpacing">
+                        <number>15</number>
+                      </property>
+                      <property name="verticalSpacing">
+                        <number>8</number>
+                      </property>
+                      <item row="0" column="0">
+                        <widget class="QLabel" name="totalReservationsLabel">
+                          <property name="font">
+                            <font>
+                              <bold>true</bold>
+                            </font>
+                          </property>
+                          <property name="styleSheet">
+                            <string>color: #34495e;</string>
+                          </property>
+                          <property name="text">
+                            <string>Total Reservations:</string>
+                          </property>
+                          <property name="alignment">
+                            <set>Qt::AlignRight|Qt::AlignVCenter</set>
+                          </property>
+                        </widget>
+                      </item>
+                      <item row="0" column="1">
+                        <widget class="QLabel" name="totalReservationsValue">
+                          <property name="styleSheet">
+                            <string>
+                              background-color: #f8f9fa;
+                              border: 1px solid #dee2e6;
+                              border-radius: 3px;
+                              padding: 2px 4px;
+                            </string>
+                          </property>
+                          <property name="text">
+                            <string>124</string>
+                          </property>
+                          <property name="alignment">
+                            <set>Qt::AlignCenter</set>
+                          </property>
+                        </widget>
+                      </item>
+                      <item row="0" column="2">
+                        <widget class="QLabel" name="currentOccupancyLabel">
+                          <property name="font">
+                            <font>
+                              <bold>true</bold>
+                            </font>
+                          </property>
+                          <property name="styleSheet">
+                            <string>color: #34495e;</string>
+                          </property>
+                          <property name="text">
+                            <string>Current Occupancy Rate:</string>
+                          </property>
+                          <property name="alignment">
+                            <set>Qt::AlignRight|Qt::AlignVCenter</set>
+                          </property>
+                        </widget>
+                      </item>
+                      <item row="0" column="3">
+                        <widget class="QLabel" name="currentOccupancyValue">
+                          <property name="styleSheet">
+                            <string>
+                              background-color: #f8f9fa;
+                              border: 1px solid #dee2e6;
+                              border-radius: 3px;
+                              padding: 2px 4px;
+                            </string>
+                          </property>
+                          <property name="text">
+                            <string>78%</string>
+                          </property>
+                          <property name="alignment">
+                            <set>Qt::AlignCenter</set>
+                          </property>
+                        </widget>
+                      </item>
+                      <item row="1" column="0">
+                        <widget class="QLabel" name="checkedInLabel">
+                          <property name="font">
+                            <font>
+                              <bold>true</bold>
+                            </font>
+                          </property>
+                          <property name="styleSheet">
+                            <string>color: #34495e;</string>
+                          </property>
+                          <property name="text">
+                            <string>Currently Checked-in:</string>
+                          </property>
+                          <property name="alignment">
+                            <set>Qt::AlignRight|Qt::AlignVCenter</set>
+                          </property>
+                        </widget>
+                      </item>
+                      <item row="1" column="1">
+                        <widget class="QLabel" name="checkedInValue">
+                          <property name="styleSheet">
+                            <string>
+                              background-color: #f8f9fa;
+                              border: 1px solid #dee2e6;
+                              border-radius: 3px;
+                              padding: 2px 4px;
+                            </string>
+                          </property>
+                          <property name="text">
+                            <string>47</string>
+                          </property>
+                          <property name="alignment">
+                            <set>Qt::AlignCenter</set>
+                          </property>
+                        </widget>
+                      </item>
+                      <item row="1" column="2">
+                        <widget class="QLabel" name="pendingArrivalsLabel">
+                          <property name="font">
+                            <font>
+                              <bold>true</bold>
+                            </font>
+                          </property>
+                          <property name="styleSheet">
+                            <string>color: #34495e;</string>
+                          </property>
+                          <property name="text">
+                            <string>Pending Arrivals Today:</string>
+                          </property>
+                          <property name="alignment">
+                            <set>Qt::AlignRight|Qt::AlignVCenter</set>
+                          </property>
+                        </widget>
+                      </item>
+                      <item row="1" column="3">
+                        <widget class="QLabel" name="pendingArrivalsValue">
+                          <property name="styleSheet">
+                            <string>
+                              background-color: #f8f9fa;
+                              border: 1px solid #dee2e6;
+                              border-radius: 3px;
+                              padding: 2px 4px;
+                            </string>
+                          </property>
+                          <property name="text">
+                            <string>12</string>
+                          </property>
+                          <property name="alignment">
+                            <set>Qt::AlignCenter</set>
+                          </property>
+                        </widget>
+                      </item>
+                      <item row="2" column="0">
+                        <widget class="QLabel" name="pendingCheckoutsLabel">
+                          <property name="font">
+                            <font>
+                              <bold>true</bold>
+                            </font>
+                          </property>
+                          <property name="styleSheet">
+                            <string>color: #34495e;</string>
+                          </property>
+                          <property name="text">
+                            <string>Pending Checkouts Today:</string>
+                          </property>
+                          <property name="alignment">
+                            <set>Qt::AlignRight|Qt::AlignVCenter</set>
+                          </property>
+                        </widget>
+                      </item>
+                      <item row="2" column="1">
+                        <widget class="QLabel" name="pendingCheckoutsValue">
+                          <property name="styleSheet">
+                            <string>
+                              background-color: #f8f9fa;
+                              border: 1px solid #dee2e6;
+                              border-radius: 3px;
+                              padding: 2px 4px;
+                            </string>
+                          </property>
+                          <property name="text">
+                            <string>8</string>
+                          </property>
+                          <property name="alignment">
+                            <set>Qt::AlignCenter</set>
+                          </property>
+                        </widget>
+                      </item>
+                      <item row="2" column="2">
+                        <widget class="QLabel" name="averageStayLabel">
+                          <property name="font">
+                            <font>
+                              <bold>true</bold>
+                            </font>
+                          </property>
+                          <property name="styleSheet">
+                            <string>color: #34495e;</string>
+                          </property>
+                          <property name="text">
+                            <string>Average Stay Duration:</string>
+                          </property>
+                          <property name="alignment">
+                            <set>Qt::AlignRight|Qt::AlignVCenter</set>
+                          </property>
+                        </widget>
+                      </item>
+                      <item row="2" column="3">
+                        <widget class="QLabel" name="averageStayValue">
+                          <property name="styleSheet">
+                            <string>
+                              background-color: #f8f9fa;
+                              border: 1px solid #dee2e6;
+                              border-radius: 3px;
+                              padding: 2px 4px;
+                            </string>
+                          </property>
+                          <property name="text">
+                            <string>3.5 days</string>
+                          </property>
+                          <property name="alignment">
+                            <set>Qt::AlignCenter</set>
+                          </property>
+                        </widget>
+                      </item>
+                      <item row="3" column="0">
+                        <widget class="QLabel" name="roomTypeStatsLabel">
+                          <property name="font">
+                            <font>
+                              <bold>true</bold>
+                            </font>
+                          </property>
+                          <property name="styleSheet">
+                            <string>color: #34495e;</string>
+                          </property>
+                          <property name="text">
+                            <string>Room Type Distribution:</string>
+                          </property>
+                          <property name="alignment">
+                            <set>Qt::AlignRight|Qt::AlignVCenter</set>
+                          </property>
+                        </widget>
+                      </item>
+                      <item row="3" column="1" colspan="3">
+                        <widget class="QFrame" name="roomTypeFrame">
+                          <property name="frameShape">
+                            <enum>QFrame::StyledPanel</enum>
+                          </property>
+                          <property name="frameShadow">
+                            <enum>QFrame::Sunken</enum>
+                          </property>
+                          <property name="styleSheet">
+                            <string>
+                              background-color: #f8f9fa;
+                              border: 1px solid #dee2e6;
+                              border-radius: 3px;
+                            </string>
+                          </property>
+                          <layout class="QVBoxLayout" name="roomTypeLayout">
+                            <property name="spacing">
+                              <number>4</number>
+                            </property>
+                            <property name="margin">
+                              <number>6</number>
+                            </property>
+                            <item>
+                              <widget class="QLabel" name="roomTypeStatsValue">
+                                <property name="styleSheet">
+                                  <string>
+                                    border: none;
+                                  </string>
+                                </property>
+                                <property name="text">
+                                  <string>Standard: 42% | Deluxe: 35% | Suites: 23%</string>
+                                </property>
+                                <property name="alignment">
+                                  <set>Qt::AlignCenter</set>
+                                </property>
+                              </widget>
+                            </item>
+                            <item>
+                              <widget class="QProgressBar" name="roomTypeBar">
+                                <property name="value">
+                                  <number>100</number>
+                                </property>
+                                <property name="textVisible">
+                                  <bool>false</bool>
+                                </property>
+                                <property name="orientation">
+                                  <enum>Qt::Horizontal</enum>
+                                </property>
+                                <property name="format">
+                                  <string></string>
+                                </property>
+                                <property name="styleSheet">
+                                  <string>
+                                    QProgressBar {
+                                      border: none;
+                                      height: 6px;
+                                      background-color: #efefef;
+                                    }
+                                    QProgressBar::chunk {
+                                      background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, 
+                                        stop:0 #6c757d, 
+                                        stop:0.42 #6c757d,
+                                        stop:0.42 #495057,
+                                        stop:0.77 #495057,
+                                        stop:0.77 #343a40,
+                                        stop:1 #343a40);
+                                    }
+                                  </string>
+                                </property>
+                              </widget>
+                            </item>
+                          </layout>
+                        </widget>
+                      </item>
+                      <item row="4" column="0">
+                        <widget class="QLabel" name="monthlyRevenueLabel">
+                          <property name="font">
+                            <font>
+                              <bold>true</bold>
+                            </font>
+                          </property>
+                          <property name="styleSheet">
+                            <string>color: #34495e;</string>
+                          </property>
+                          <property name="text">
+                            <string>Monthly Revenue:</string>
+                          </property>
+                          <property name="alignment">
+                            <set>Qt::AlignRight|Qt::AlignVCenter</set>
+                          </property>
+                        </widget>
+                      </item>
+                      <item row="4" column="1">
+                        <widget class="QLabel" name="monthlyRevenueValue">
+                          <property name="styleSheet">
+                            <string>
+                              background-color: #f8f9fa;
+                              border: 1px solid #dee2e6;
+                              border-radius: 3px;
+                              padding: 2px 4px;
+                            </string>
+                          </property>
+                          <property name="text">
+                            <string>$87,521.00</string>
+                          </property>
+                          <property name="alignment">
+                            <set>Qt::AlignCenter</set>
+                          </property>
+                        </widget>
+                      </item>
+                      <item row="4" column="2">
+                        <widget class="QLabel" name="revenueTrendLabel">
+                          <property name="font">
+                            <font>
+                              <bold>true</bold>
+                            </font>
+                          </property>
+                          <property name="styleSheet">
+                            <string>color: #34495e;</string>
+                          </property>
+                          <property name="text">
+                            <string>Revenue Trend:</string>
+                          </property>
+                          <property name="alignment">
+                            <set>Qt::AlignRight|Qt::AlignVCenter</set>
+                          </property>
+                        </widget>
+                      </item>
+                      <item row="4" column="3">
+                        <widget class="QLabel" name="revenueTrendValue">
+                          <property name="styleSheet">
+                            <string>
+                              background-color: #f8f9fa;
+                              border: 1px solid #dee2e6;
+                              border-radius: 3px;
+                              padding: 2px 4px;
+                            </string>
+                          </property>
+                          <property name="text">
+                            <string>↑ 12% from last month</string>
+                          </property>
+                          <property name="alignment">
+                            <set>Qt::AlignCenter</set>
+                          </property>
+                        </widget>
+                      </item>
+                      <item row="5" column="0">
+                        <widget class="QLabel" name="topOriginLabel">
+                          <property name="font">
+                            <font>
+                              <bold>true</bold>
+                            </font>
+                          </property>
+                          <property name="styleSheet">
+                            <string>color: #34495e;</string>
+                          </property>
+                          <property name="text">
+                            <string>Top Guest Origins:</string>
+                          </property>
+                          <property name="alignment">
+                            <set>Qt::AlignRight|Qt::AlignVCenter</set>
+                          </property>
+                        </widget>
+                      </item>
+                      <item row="5" column="1" colspan="3">
+                        <widget class="QFrame" name="originFrame">
+                          <property name="frameShape">
+                            <enum>QFrame::StyledPanel</enum>
+                          </property>
+                          <property name="frameShadow">
+                            <enum>QFrame::Sunken</enum>
+                          </property>
+                          <property name="styleSheet">
+                            <string>
+                              background-color: #f8f9fa;
+                              border: 1px solid #dee2e6;
+                              border-radius: 3px;
+                            </string>
+                          </property>
+                          <layout class="QVBoxLayout" name="originLayout">
+                            <property name="spacing">
+                              <number>4</number>
+                            </property>
+                            <property name="margin">
+                              <number>6</number>
+                            </property>
+                            <item>
+                              <widget class="QLabel" name="topOriginValue">
+                                <property name="styleSheet">
+                                  <string>
+                                    border: none;
+                                  </string>
+                                </property>
+                                <property name="text">
+                                  <string>USA: 32% | Germany: 18% | UK: 14% | France: 9% | Canada: 7%</string>
+                                </property>
+                                <property name="alignment">
+                                  <set>Qt::AlignCenter</set>
+                                </property>
+                              </widget>
+                            </item>
+                            <item>
+                              <widget class="QProgressBar" name="originBar">
+                                <property name="value">
+                                  <number>100</number>
+                                </property>
+                                <property name="textVisible">
+                                  <bool>false</bool>
+                                </property>
+                                <property name="orientation">
+                                  <enum>Qt::Horizontal</enum>
+                                </property>
+                                <property name="format">
+                                  <string></string>
+                                </property>
+                                <property name="styleSheet">
+                                  <string>
+                                    QProgressBar {
+                                      border: none;
+                                      height: 6px;
+                                      background-color: #efefef;
+                                    }
+                                    QProgressBar::chunk {
+                                      background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, 
+                                        stop:0 #343a40, 
+                                        stop:0.32 #343a40,
+                                        stop:0.32 #495057,
+                                        stop:0.5 #495057,
+                                        stop:0.5 #6c757d,
+                                        stop:0.64 #6c757d,
+                                        stop:0.64 #adb5bd,
+                                        stop:0.73 #adb5bd,
+                                        stop:0.73 #ced4da,
+                                        stop:0.8 #ced4da,
+                                        stop:0.8 #dee2e6,
+                                        stop:1 #dee2e6);
+                                    }
+                                  </string>
+                                </property>
+                              </widget>
+                            </item>
+                          </layout>
+                        </widget>
+                      </item>
+                    </layout>
+                  </item>
+                  <item>
+                    <widget class="QLabel" name="statsPeriodLabel">
+                      <property name="styleSheet">
+                        <string>
+                          color: #6c757d;
+                          font-style: italic;
+                          font-size: 9pt;
+                          padding-top: 5px;
+                        </string>
+                      </property>
+                      <property name="text">
+                        <string>* Statistics shown are for the current search period. Use date filters to adjust.</string>
+                      </property>
+                      <property name="alignment">
+                        <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+                      </property>
+                    </widget>
+                  </item>
+                </layout>
+              </widget>
+            </widget>
+          </item>
+          <item>
+            <widget class="QFrame" name="dividerLine">
+              <property name="frameShape">
+                <enum>QFrame::HLine</enum>
+              </property>
+              <property name="frameShadow">
+                <enum>QFrame::Sunken</enum>
+              </property>
+              <property name="styleSheet">
+                <string>
+                  background-color: #dee2e6;
+                  height: 1px;
+                  margin: 2px 0;
+                </string>
+              </property>
+            </widget>
+          </item>
+          <item>
+            <layout class="QHBoxLayout" name="statsButtonLayout">
+              <property name="spacing">
+                <number>10</number>
+              </property>
+              <property name="topMargin">
+                <number>5</number>
+              </property>
+              <item>
+                <spacer name="statsButtonSpacer">
+                  <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                    <size>
+                      <width>40</width>
+                      <height>20</height>
+                    </size>
+                  </property>
+                </spacer>
+              </item>
+              <item>
+                <widget class="QPushButton" name="refreshStatsButton">
+                  <property name="minimumSize">
+                    <size>
+                      <width>110</width>
+                      <height>30</height>
+                    </size>
+                  </property>
+                  <property name="styleSheet">
+                    <string>
+                      QPushButton {
+                        background-color: #f8f9fa;
+                        color: #343a40;
+                        border: 1px solid #ced4da;
+                        border-radius: 3px;
+                        font-weight: bold;
+                        padding: 4px 10px;
+                      }
+                      QPushButton:hover {
+                        background-color: #e9ecef;
+                        border-color: #adb5bd;
+                      }
+                      QPushButton:pressed {
+                        background-color: #dee2e6;
+                        border-color: #6c757d;
+                      }
+                    </string>
+                  </property>
+                  <property name="text">
+                    <string>Refresh Stats</string>
+                  </property>
+                  <property name="icon">
+                    <iconset>
+                      <normaloff>:/icons/refresh.png</normaloff>:/icons/refresh.png</iconset>
+                  </property>
+                </widget>
+              </item>
+              <item>
+                <widget class="QPushButton" name="exportStatsButton">
+                  <property name="minimumSize">
+                    <size>
+                      <width>110</width>
+                      <height>30</height>
+                    </size>
+                  </property>
+                  <property name="styleSheet">
+                    <string>
+                      QPushButton {
+                        background-color: #f8f9fa;
+                        color: #343a40;
+                        border: 1px solid #ced4da;
+                        border-radius: 3px;
+                        font-weight: bold;
+                        padding: 4px 10px;
+                      }
+                      QPushButton:hover {
+                        background-color: #e9ecef;
+                        border-color: #adb5bd;
+                      }
+                      QPushButton:pressed {
+                        background-color: #dee2e6;
+                        border-color: #6c757d;
+                      }
+                    </string>
+                  </property>
+                  <property name="text">
+                    <string>Export Stats</string>
+                  </property>
+                  <property name="icon">
+                    <iconset>
+                      <normaloff>:/icons/export.png</normaloff>:/icons/export.png</iconset>
+                  </property>
+                </widget>
+              </item>
+            </layout>
+          </item>
+        </layout>
+      </widget>
+    </item>
+  </layout>
+</widget>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>Selected Reservation:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="selectedReservationLabel">
+            <property name="text">
+             <string>None</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Orientation::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="modifyButton">
+            <property name="text">
+             <string>Modify</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="deleteButton">
+            <property name="text">
+             <string>Delete</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+<widget class="QWidget" name="tab_calendar">
+       <attribute name="title">
+        <string>Calendar View</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+           <widget class="QPushButton" name="prevMonthButton">
+            <property name="maximumSize">
+             <size>
+              <width>50</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>&lt;</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="monthYearLabel">
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>April 2025</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignmentFlag::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="nextMonthButton">
+            <property name="maximumSize">
+             <size>
+              <width>50</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>&gt;</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="todayButton">
+            <property name="text">
+             <string>Today</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Orientation::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="filterLayout">
+          <item>
+           <widget class="QLabel" name="roomTypeLabel">
+            <property name="text">
+             <string>Room Type:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="roomTypeFilterComboBox">
+            <property name="minimumWidth">
+             <number>150</number>
+            </property>
+            <item>
+             <property name="text">
+              <string>All Room Types</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Standard Single</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Standard Double</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Deluxe King</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Deluxe Double</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Junior Suite</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Executive Suite</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Presidential Suite</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="minRoomsLabel">
+            <property name="text">
+             <string>Min. Available Rooms:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="minRoomsSpinBox">
+            <property name="minimum">
+             <number>1</number>
+            </property>
+            <property name="maximum">
+             <number>20</number>
+            </property>
+            <property name="value">
+             <number>1</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="applyFilterButton">
+            <property name="text">
+             <string>Apply Filter</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_4">
+            <property name="orientation">
+             <enum>Qt::Orientation::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="legendLayout">
+          <item>
+           <widget class="QLabel" name="legendLabel">
+            <property name="text">
+             <string>Legend:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QFrame" name="fullyAvailableFrame">
+            <property name="minimumSize">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::Box</enum>
+            </property>
+            <property name="styleSheet">
+             <string>background-color: #90EE90;</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="fullyAvailableLabel">
+            <property name="text">
+             <string>Many Available</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QFrame" name="partiallyAvailableFrame">
+            <property name="minimumSize">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::Box</enum>
+            </property>
+            <property name="styleSheet">
+             <string>background-color: #FFFF99;</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="partiallyAvailableLabel">
+            <property name="text">
+             <string>Limited Availability</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QFrame" name="fullyBookedFrame">
+            <property name="minimumSize">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::Box</enum>
+            </property>
+            <property name="styleSheet">
+             <string>background-color: #e74c3c;</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="fullyBookedLabel">
+            <property name="text">
+             <string>Fully Booked</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_5">
+            <property name="orientation">
+             <enum>Qt::Orientation::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QCalendarWidget" name="calendarWidget">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>300</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">
+/* Base style for the calendar */
+QCalendarWidget QAbstractItemView {
+  selection-background-color: #337ab7;
+  selection-color: white;
+}
+
+/* The cell dates will be colored programmatically */
+</string>
+          </property>
+          <property name="locale">
+           <locale language="English" country="UnitedStates"/>
+          </property>
+          <property name="horizontalHeaderFormat">
+           <enum>QCalendarWidget::HorizontalHeaderFormat::LongDayNames</enum>
+          </property>
+          <property name="verticalHeaderFormat">
+           <enum>QCalendarWidget::VerticalHeaderFormat::NoVerticalHeader</enum>
+          </property>
+          <property name="navigationBarVisible">
+           <bool>false</bool>
+          </property>
+          <property name="dateEditEnabled">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+</widget>
+<widget class="QWidget" name="tab_add_reservation">
+       <attribute name="title">
+        <string>Add Reservation</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_6">
+        <item>
+         <widget class="QScrollArea" name="scrollArea">
+          <property name="widgetResizable">
+           <bool>true</bool>
+          </property>
+          <widget class="QWidget" name="scrollAreaWidgetContents">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>858</width>
+             <height>500</height>
+            </rect>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_7">
+            <item>
+             <widget class="QGroupBox" name="clientGroupBox">
+              <property name="title">
+               <string>Client Selection</string>
+              </property>
+              <layout class="QHBoxLayout" name="clientLayout">
+               <item>
+                <widget class="QLabel" name="clientSearchLabel">
+                 <property name="text">
+                  <string>Search Client:</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QComboBox" name="clientComboBox">
+                 <property name="minimumSize">
+                  <size>
+                   <width>300</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="editable">
+                  <bool>true</bool>
+                 </property>
+                 <property name="placeholderText">
+                  <string>Type name to search clients...</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="searchClientButton">
+                 <property name="text">
+                  <string>Search</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="roomDetailsGroupBox">
+              <property name="title">
+               <string>Room Details</string>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_2">
+               <item row="0" column="0">
+                <widget class="QLabel" name="roomTypeLabel_2">
+                 <property name="text">
+                  <string>Room Type:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QComboBox" name="roomTypeComboBox">
+                 <item>
+                  <property name="text">
+                   <string>Standard Single</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Standard Double</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Deluxe King</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Deluxe Double</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Junior Suite</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Executive Suite</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Presidential Suite</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="availableRoomsLabel">
+                 <property name="text">
+                  <string>Available Rooms:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QComboBox" name="roomNumberComboBox"/>
+               </item>
+               <item row="2" column="0">
+                <widget class="QLabel" name="rateLabel">
+                 <property name="text">
+                  <string>Room Rate:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <widget class="QDoubleSpinBox" name="rateSpinBox">
+                 <property name="prefix">
+                  <string>$</string>
+                 </property>
+                 <property name="maximum">
+                  <double>9999.99</double>
+                 </property>
+                 <property name="value">
+                  <double>149.99</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="2">
+                <widget class="QPushButton" name="checkAvailabilityButton">
+                 <property name="text">
+                  <string>Check Availability</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="2">
+                <widget class="QLabel" name="roomDetailsLabel">
+                 <property name="text">
+                  <string>Room Details</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="stayDetailsGroupBox">
+              <property name="title">
+               <string>Stay Details</string>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_3">
+               <item row="0" column="0">
+                <widget class="QLabel" name="checkInLabel">
+                 <property name="text">
+                  <string>Check-in Date:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QDateEdit" name="checkInDateEdit">
+                 <property name="minimumSize">
+                  <size>
+                   <width>150</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="calendarPopup">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="2">
+                <widget class="QLabel" name="checkInTimeLabel">
+                 <property name="text">
+                  <string>Time:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="3">
+                <widget class="QTimeEdit" name="checkInTimeEdit">
+                 <property name="time">
+                  <time>
+                   <hour>14</hour>
+                   <minute>0</minute>
+                   <second>0</second>
+                  </time>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="checkOutLabel">
+                 <property name="text">
+                  <string>Check-out Date:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QDateEdit" name="checkOutDateEdit">
+                 <property name="minimumSize">
+                  <size>
+                   <width>150</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="calendarPopup">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="2">
+                <widget class="QLabel" name="checkOutTimeLabel">
+                 <property name="text">
+                  <string>Time:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="3">
+                <widget class="QTimeEdit" name="checkOutTimeEdit">
+                 <property name="time">
+                  <time>
+                   <hour>11</hour>
+                   <minute>0</minute>
+                   <second>0</second>
+                  </time>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0">
+                <widget class="QLabel" name="nightsLabel">
+                 <property name="text">
+                  <string>Number of Nights:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <widget class="QSpinBox" name="nightsSpinBox">
+                 <property name="minimum">
+                  <number>1</number>
+                 </property>
+                 <property name="maximum">
+                  <number>365</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="0">
+                <widget class="QLabel" name="adultsLabel">
+                 <property name="text">
+                  <string>Adults:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="1">
+                <widget class="QSpinBox" name="adultsSpinBox">
+                 <property name="minimum">
+                  <number>1</number>
+                 </property>
+                 <property name="maximum">
+                  <number>10</number>
+                 </property>
+                 <property name="value">
+                  <number>1</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="2">
+                <widget class="QLabel" name="childrenLabel">
+                 <property name="text">
+                  <string>Children:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="3">
+                <widget class="QSpinBox" name="childrenSpinBox">
+                 <property name="maximum">
+                  <number>10</number>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="paymentDetailsGroupBox">
+              <property name="title">
+               <string>Payment Details</string>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_4">
+               <item row="0" column="0">
+                <widget class="QLabel" name="paymentMethodLabel">
+                 <property name="text">
+                  <string>Payment Method:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QComboBox" name="paymentMethodComboBox">
+                 <item>
+                  <property name="text">
+                   <string>Credit Card</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Debit Card</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Cash</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Bank Transfer</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Third-party Booking</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="depositLabel">
+                 <property name="text">
+                  <string>Deposit Amount:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QDoubleSpinBox" name="depositSpinBox">
+                 <property name="prefix">
+                  <string>$</string>
+                 </property>
+                 <property name="maximum">
+                  <double>9999.99</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0">
+                <widget class="QLabel" name="totalAmountLabel">
+                 <property name="text">
+                  <string>Total Amount:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <widget class="QDoubleSpinBox" name="totalAmountSpinBox">
+                 <property name="prefix">
+                  <string>$</string>
+                 </property>
+                 <property name="maximum">
+                  <double>99999.99</double>
+                 </property>
+                 <property name="readOnly">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="0">
+                <widget class="QLabel" name="statusLabel">
+                 <property name="text">
+                  <string>Reservation Status:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="1">
+                <widget class="QComboBox" name="statusComboBox">
+                 <item>
+                  <property name="text">
+                   <string>Confirmed</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Pending</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="notesGroupBox">
+              <property name="title">
+               <string>Additional Notes</string>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_8">
+               <item>
+                <widget class="QTextEdit" name="notesTextEdit">
+                 <property name="placeholderText">
+                  <string>Enter any special requests or additional information here...</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <item>
+           <spacer name="horizontalSpacer_4">
+            <property name="orientation">
+             <enum>Qt::Orientation::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="clearButton">
+            <property name="text">
+             <string>Clear Form</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="saveButton">
+            <property name="minimumSize">
+             <size>
+              <width>120</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Save Reservation</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="cancelButton">
+            <property name="text">
+             <string>Cancel</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+</widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>900</width>
+     <height>44</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionNew_Reservation"/>
+    <addaction name="separator"/>
+    <addaction name="actionPrint"/>
+    <addaction name="actionExport"/>
+    <addaction name="separator"/>
+    <addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="menuReservation">
+    <property name="title">
+     <string>Reservation</string>
+    </property>
+    <addaction name="actionAdd_Reservation"/>
+    <addaction name="actionModify_Reservation"/>
+    <addaction name="actionDelete_Reservation"/>
+    <addaction name="separator"/>
+    <addaction name="actionCheck_In"/>
+    <addaction name="actionCheck_Out"/>
+    <addaction name="separator"/>
+    <addaction name="actionSearch"/>
+   </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>View</string>
+    </property>
+    <addaction name="actionReservation_List"/>
+    <addaction name="actionCalendar_View"/>
+    <addaction name="separator"/>
+    <addaction name="actionRefresh"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionHelp"/>
+    <addaction name="actionAbout"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuReservation"/>
+   <addaction name="menuView"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionAdd_Reservation"/>
+   <addaction name="actionModify_Reservation"/>
+   <addaction name="actionDelete_Reservation"/>
+   <addaction name="separator"/>
+   <addaction name="actionCheck_In"/>
+   <addaction name="actionCheck_Out"/>
+   <addaction name="separator"/>
+   <addaction name="actionRefresh"/>
+  </widget>
+  <!-- Existing actions -->
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
