@@ -31,12 +31,16 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(m_reservationModel, &ReservationModel::dataChanged, this, &MainWindow::onReservationDataChanged);
 
+    testClientDatabase();
+
+    initializeDatabase();
     // Setup UI elements
     setupReservationsTab();
     setupDashboard();
 
     // Set window title
     setWindowTitle("Hotel Management System");
+
 }
 
 MainWindow::~MainWindow()
@@ -658,10 +662,163 @@ void MainWindow::setupDashboard()
     updateDashboard();
 }
 
+void MainWindow::testClientDatabase()
+{
+    DbManager* dbManager = m_reservationModel->getDatabaseManager();
+    if (!dbManager) {
+        qDebug() << "Cannot access database manager";
+        return;
+    }
+
+    QSqlQuery query("SELECT * FROM clients LIMIT 10");
+    qDebug() << "Testing client database...";
+
+    if (query.exec()) {
+        int count = 0;
+        while (query.next()) {
+            count++;
+            qDebug() << "Client found:" << query.value("name").toString()
+                     << "from" << query.value("country").toString();
+        }
+
+        if (count == 0) {
+            qDebug() << "No clients found in database!";
+            // Call the addSampleClients function to add some test data
+            if (dbManager->addSampleClients()) {
+                qDebug() << "Added sample clients to database";
+            } else {
+                qDebug() << "Failed to add sample clients";
+            }
+        } else {
+            qDebug() << "Found" << count << "clients in database";
+        }
+    } else {
+        qDebug() << "Error querying clients table:" << query.lastError().text();
+
+        // Check if the clients table exists
+        QSqlQuery tableQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='clients'");
+        if (tableQuery.exec() && tableQuery.next()) {
+            qDebug() << "Clients table exists but query failed";
+        } else {
+            qDebug() << "Clients table does not exist! Creating it...";
+            // Create the table
+            if (dbManager->createClientTable())
+            {
+                qDebug() << "Created clients table";
+                // Add sample data
+                if (dbManager->addSampleClients()) {
+                    qDebug() << "Added sample clients to database";
+                }
+            }
+        }
+    }
+}
+
+void MainWindow::checkClientTableStructure()
+{
+    QSqlQuery query("PRAGMA table_info(clients)");
+    qDebug() << "Checking clients table structure:";
+    QStringList columns;
+    while (query.next()) {
+        QString columnName = query.value(1).toString();
+        QString columnType = query.value(2).toString();
+        columns.append(columnName + " (" + columnType + ")");
+    }
+    qDebug() << "Columns:" << columns.join(", ");
+}
+
+void MainWindow::on_searchClientButton_clicked()
+{
+    // Get the database manager
+    DbManager* dbManager = m_reservationModel->getDatabaseManager();
+    if (!dbManager) {
+        QMessageBox::warning(this, tr("Database Error"),
+                             tr("Cannot access the database. Please check your connection."));
+        return;
+    }
+
+    // Clear the combo box
+    ui->clientComboBox->clear();
+
+    // Query to get clients who don't have active reservations
+    QSqlQuery query;
+    query.prepare(
+        "SELECT c.* FROM clients c "
+        "WHERE c.id_client NOT IN ( "
+        "   SELECT r.id_client FROM reservations r "
+        "   WHERE r.status IN (0, 1, 2) "  // Pending, Confirmed, Checked-in
+        ")"
+        );
+
+    if (query.exec()) {
+        QStringList clients;
+
+        while (query.next()) {
+            // Get first name and last name from the record
+            QString firstName = query.value("first_name").toString();
+            QString lastName = query.value("last_name").toString();
+
+            // Combine into full name
+            QString fullName = firstName;
+            if (!lastName.isEmpty()) {
+                fullName += " " + lastName;
+            }
+
+            if (!fullName.trimmed().isEmpty()) {
+                clients.append(fullName);
+                qDebug() << "Found available client:" << fullName;
+            }
+        }
+
+        if (!clients.isEmpty()) {
+            ui->clientComboBox->addItems(clients);
+            ui->clientComboBox->showPopup();
+            qDebug() << "Added" << clients.size() << "available clients to combobox";
+        } else {
+            QMessageBox::information(this, "No Available Clients",
+                                     "No clients without active reservations found in the database.");
+        }
+    } else {
+        QMessageBox::warning(this, "Query Error",
+                             "Failed to query available clients: " + query.lastError().text());
+        qDebug() << "Available client query failed:" << query.lastError().text();
+    }
+}
+
+void MainWindow::searchAvailableClients(const QString &searchText)
+{
+    // Clear the current items in the combo box
+    ui->clientComboBox->clear();
+
+    // Get the database manager
+    DbManager* dbManager = m_reservationModel->getDatabaseManager();
+    if (!dbManager || !dbManager->isOpen()) {
+        QMessageBox::warning(this, tr("Database Error"),
+                             tr("Cannot access the database. Please check your connection."));
+        return;
+    }
+
+    // Get matching available clients
+    QList<QString> clients = dbManager->searchAvailableClients(searchText);
+
+    // Add results to the combo box
+    ui->clientComboBox->addItems(clients);
+
+    // If there are results, show the dropdown
+    if (!clients.isEmpty()) {
+        ui->clientComboBox->showPopup();
+    } else {
+        // No results found
+        QMessageBox::information(this, tr("No Available Clients"),
+                                 tr("No clients without active reservations match your search."));
+        ui->clientComboBox->setEditText(searchText);
+    }
+}
 
 void MainWindow::updateDashboard()
 {
-    if (!m_currentYearSeries || !m_previousYearSeries || !m_statusSeries || !m_countryStatsTableView) {
+    if (!m_currentYearSeries || !m_previousYearSeries || !m_statusSeries || !m_countryStatsTableView)
+    {
         // Charts haven't been initialized yet, nothing to update
         return;
     }
@@ -791,6 +948,7 @@ void MainWindow::updateDashboard()
     // Update country stats table
     setupCountryStatsTable(m_countryStatsTableView);
 }
+
 void MainWindow::setupReservationsTab()
 {
     // Set the model for the table view
@@ -867,6 +1025,7 @@ void MainWindow::setupReservationsTab()
     connect(ui->clearButton, &QPushButton::clicked, this, &MainWindow::on_clearButton_clicked);
     connect(ui->checkAvailabilityButton, &QPushButton::clicked, this, &MainWindow::on_checkAvailabilityButton_clicked);
 
+    connect(ui->searchClientButton, &QPushButton::clicked, this, &MainWindow::on_searchClientButton_clicked);
     // Connect date and night changes
     connect(ui->checkInDateEdit, &QDateEdit::dateChanged, this, &MainWindow::on_checkInDateEdit_dateChanged);
     connect(ui->checkOutDateEdit, &QDateEdit::dateChanged, this, &MainWindow::on_checkOutDateEdit_dateChanged);
@@ -899,11 +1058,42 @@ void MainWindow::setupReservationsTab()
 
 void MainWindow::populateCountryComboBox()
 {
-    //QStringList countries = Reservation::getCountryList();
+    DbManager* dbManager = m_reservationModel->getDatabaseManager();
+    if (!dbManager) {
+        return;
+    }
+
+    QStringList countries = dbManager->getCountries();
     ui->countryFilterComboBox->clear();
     ui->countryFilterComboBox->addItem("All Countries");
-    //ui->countryFilterComboBox->addItems(countries);
+    ui->countryFilterComboBox->addItems(countries);
 }
+
+void MainWindow::initializeDatabase()
+{
+    DbManager* dbManager = m_reservationModel->getDatabaseManager();
+    if (!dbManager) {
+        QMessageBox::critical(this, tr("Database Error"),
+                              tr("Cannot access the database. Application will exit."));
+        QApplication::exit(1);
+        return;
+    }
+
+    // Initialize the database schema if needed
+    if (!dbManager->isInitialized()) {
+        dbManager->initializeDatabase();
+
+        // Create sample data
+        dbManager->createSampleReservations();
+
+        QMessageBox::information(this, tr("Database Initialized"),
+                                 tr("The database has been initialized with sample data."));
+    }
+
+    // Refresh the model to load data from database
+    m_reservationModel->resetFilter();
+}
+
 
 void MainWindow::on_searchTypeComboBox_currentIndexChanged(int index)
 {
@@ -980,6 +1170,11 @@ void MainWindow::on_resetButton_clicked()
 
     // Reset the filter
     m_reservationModel->resetFilter();
+    // Refresh the model to show the updated data
+    m_reservationModel->refresh();
+
+    // Update the dashboard
+    updateDashboard();
 }
 
 int MainWindow::getNextReservationId()
@@ -1190,44 +1385,93 @@ void MainWindow::on_saveButton_clicked()
                              tr("Please select a client."));
         return;
     }
-
     if (ui->roomNumberComboBox->currentText().isEmpty()) {
         QMessageBox::warning(this, tr("Missing Information"),
                              tr("Please select a room."));
         return;
     }
 
+    // Get the database manager from the model
+    DbManager* dbManager = m_reservationModel->getDatabaseManager();
+    if (!dbManager) {
+        QMessageBox::warning(this, tr("Database Error"),
+                             tr("Cannot access the database. Please check your connection."));
+        return;
+    }
+
     // Create a new Reservation object with the form data
+    // For now, we'll use your original approach with empty strings for country, phone, email
     Reservation newReservation(
-        m_currentReservationId > 0 ? m_currentReservationId : getNextReservationId(),
+        m_currentReservationId > 0 ? m_currentReservationId : -1,
         ui->clientComboBox->currentText(),
         ui->roomNumberComboBox->currentText(),
         ui->roomTypeComboBox->currentText(),
-        "Unknown", // Country - would need to be populated from client data
-        "", // Phone - would need to be populated from client data
-        "", // Email - would need to be populated from client data
+        "", // Country - DB will need to handle this
+        "", // Phone - DB will need to handle this
+        "", // Email - DB will need to handle this
         ui->checkInDateEdit->date(),
         ui->checkOutDateEdit->date(),
         ui->statusComboBox->currentText() == "Confirmed" ? Reservation::Confirmed : Reservation::Pending
         );
 
-    // If this is an edit operation, remove the old reservation first
+    bool success = false;
+    // If this is an edit operation, update the existing reservation
     if (m_currentReservationId > 0) {
-        m_reservationModel->removeReservation(m_currentReservationId);
+        success = dbManager->updateReservation(newReservation);
+    } else {
+        // Add a new reservation
+        success = dbManager->addReservation(newReservation);
     }
 
-    // Add the reservation to the model
-    m_reservationModel->addReservation(newReservation);
+    if (success) {
+        // Show success message
+        QMessageBox::information(this, tr("Reservation Saved"),
+                                 tr("Reservation has been successfully saved."));
 
-    // Show success message
-    showInfoMessage(tr("Reservation Saved"),
-                    tr("Reservation has been successfully saved."));
+        // Reset search criteria to show all reservations
+        ui->searchLineEdit->clear();
 
-    // Switch back to the reservations tab
-    ui->tabWidget->setCurrentWidget(ui->tab_reservations);
-    updateDashboard();
+        // Apply an "all records" filter
+        m_reservationModel->filterReservations("", 0, QDate(), QDate(),
+                                               "All Types", "All Statuses", "All Countries");
+
+        // Refresh the model to show the updated data
+        m_reservationModel->refresh();
+
+        // Update the dashboard
+        updateDashboard();
+
+        // Switch back to the reservations tab
+        ui->tabWidget->setCurrentWidget(ui->tab_reservations);
+    } else {
+        QMessageBox::critical(this, tr("Error"),
+                              tr("Failed to save the reservation. Please try again."));
+    }
 }
 
+void MainWindow::clearFilters()
+{
+    ui->searchLineEdit->clear();
+    ui->searchTypeComboBox->setCurrentIndex(0);
+
+    // Reset date filters to show all dates
+    QDate pastDate = QDate::currentDate().addYears(-5);
+    QDate futureDate = QDate::currentDate().addYears(5);
+    ui->fromDateEdit->setDate(pastDate);
+    ui->toDateEdit->setDate(futureDate);
+
+    // If advanced search is enabled, reset those filters too
+    if (ui->advancedSearchCheckBox->isChecked()) {
+        ui->advancedSearchCheckBox->setChecked(false);
+        ui->roomTypeFilterComboBox->setCurrentIndex(0);
+        ui->statusFilterComboBox->setCurrentIndex(0);
+        ui->countryFilterComboBox->setCurrentIndex(0);
+    }
+
+    // Apply the reset filters
+    m_reservationModel->filterReservations("", 0, QDate(), QDate(),
+                                           "All Types", "All Statuses", "All Countries");
+}
 void MainWindow::on_cancelButton_clicked()
 {
     // Ask for confirmation if form has been modified
@@ -1245,74 +1489,96 @@ void MainWindow::on_clearButton_clicked()
 // Add these methods to handle room availability
 void MainWindow::on_checkAvailabilityButton_clicked()
 {
-    // In a real implementation, this would query the database for available rooms
-    // For now, we'll just populate with dummy data
-    ui->roomNumberComboBox->clear();
-
-    // Dummy room numbers based on room type
-    QString roomType = ui->roomTypeComboBox->currentText();
-    QStringList roomNumbers;
-
-    if (roomType == "Standard Single") {
-        roomNumbers << "101" << "102" << "103";
-    } else if (roomType == "Standard Double") {
-        roomNumbers << "201" << "202" << "203";
-    } else if (roomType == "Deluxe King") {
-        roomNumbers << "301" << "302";
-    } else if (roomType == "Deluxe Double") {
-        roomNumbers << "401" << "402";
-    } else if (roomType == "Junior Suite") {
-        roomNumbers << "501" << "502";
-    } else if (roomType == "Executive Suite") {
-        roomNumbers << "601";
-    } else if (roomType == "Presidential Suite") {
-        roomNumbers << "701";
+    // Get the database manager from the model
+    DbManager* dbManager = m_reservationModel->getDatabaseManager();
+    if (!dbManager) {
+        QMessageBox::warning(this, tr("Database Error"),
+                             tr("Cannot access the database. Please check your connection."));
+        return;
     }
 
-    // Add available rooms to the combo box
-    ui->roomNumberComboBox->addItems(roomNumbers);
+    // Get the selected room type and dates
+    QString roomType = ui->roomTypeComboBox->currentText();
+    QDate checkInDate = ui->checkInDateEdit->date();
+    QDate checkOutDate = ui->checkOutDateEdit->date();
 
-    // Update room details
+    // Clear the room number combo box
+    ui->roomNumberComboBox->clear();
+
+    // Get available rooms from the database
+    QStringList availableRooms = dbManager->getAvailableRoomNumbers(roomType, checkInDate, checkOutDate);
+
+    // If no rooms are available, show a message
+    if (availableRooms.isEmpty()) {
+        QMessageBox::information(this, "Room Availability",
+                                 QString("No %1 rooms are available for the selected dates.").arg(roomType));
+
+        // Update the label to show no rooms available
+        ui->availableRoomsLabel->setText(QString("Available Rooms: (None)"));
+        return;
+    }
+
+    // Add the available rooms to the combo box
+    ui->roomNumberComboBox->addItems(availableRooms);
+
+    // Update the label to show how many rooms are available
+    ui->availableRoomsLabel->setText(QString("Available Rooms: (%1)").arg(availableRooms.size()));
+
+    // Select the first available room
+    ui->roomNumberComboBox->setCurrentIndex(0);
+
+    // Update room details for the selected room
     updateRoomDetails();
 }
 
-
 void MainWindow::updateRoomDetails()
 {
-    // In a real implementation, this would display room details
-    // For now, we'll just show a placeholder text
+    // Get the database manager from the model
+    DbManager* dbManager = m_reservationModel->getDatabaseManager();
+    if (!dbManager) {
+        return;
+    }
+
+    // Get the currently selected room type and number
     QString roomType = ui->roomTypeComboBox->currentText();
     QString roomNumber = ui->roomNumberComboBox->currentText();
 
-    if (!roomNumber.isEmpty()) {
-        ui->roomDetailsLabel->setText(roomType + " - Room " + roomNumber);
-
-        // Set a default rate based on room type
-        double rate = 149.99; // Default rate
-
-        if (roomType == "Standard Single") {
-            rate = 149.99;
-        } else if (roomType == "Standard Double") {
-            rate = 179.99;
-        } else if (roomType == "Deluxe King") {
-            rate = 229.99;
-        } else if (roomType == "Deluxe Double") {
-            rate = 249.99;
-        } else if (roomType == "Junior Suite") {
-            rate = 329.99;
-        } else if (roomType == "Executive Suite") {
-            rate = 499.99;
-        } else if (roomType == "Presidential Suite") {
-            rate = 999.99;
-        }
-
-        ui->rateSpinBox->setValue(rate);
-
-        // Update total amount
-        calculateTotalAmount();
-    } else {
+    // If no room is selected, clear details
+    if (roomNumber.isEmpty()) {
         ui->roomDetailsLabel->setText("No room selected");
+        return;
     }
+
+    // Display room details (you can enhance this with more database information)
+    QString roomDetails;
+
+    // This could come from a database table with room descriptions
+    if (roomType == "Standard Single") {
+        roomDetails = "1 Single Bed, 25 m², City View";
+    } else if (roomType == "Standard Double") {
+        roomDetails = "1 Double Bed, 30 m², City View";
+    } else if (roomType == "Deluxe King") {
+        roomDetails = "1 King Bed, 35 m², Garden View";
+    } else if (roomType == "Deluxe Double") {
+        roomDetails = "2 Double Beds, 40 m², Garden View";
+    } else if (roomType == "Junior Suite") {
+        roomDetails = "1 King Bed, Sitting Area, 50 m², Ocean View";
+    } else if (roomType == "Executive Suite") {
+        roomDetails = "1 King Bed, Separate Living Room, 65 m², Ocean View";
+    } else if (roomType == "Presidential Suite") {
+        roomDetails = "1 King Bed, Luxury Suite, 100 m², Panoramic View";
+    }
+
+    ui->roomDetailsLabel->setText(QString("Room %1: %2").arg(roomNumber).arg(roomDetails));
+
+    // Get the rate from the database
+    double rate = dbManager->getRoomRate(roomType);
+    if (rate > 0) {
+        ui->rateSpinBox->setValue(rate);
+    }
+
+    // Calculate total amount
+    calculateTotalAmount();
 }
 
 

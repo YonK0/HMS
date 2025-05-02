@@ -45,6 +45,8 @@ protected:
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    void searchAvailableClients(const QString &searchText);
+    void on_searchClientButton_clicked();
     //DbManager* getDatabaseManager() const { return m_dbManager; }
 private slots:
     // Button handlers
@@ -66,6 +68,8 @@ private slots:
     void on_checkOutDateEdit_dateChanged(const QDate &date);
     void on_nightsSpinBox_valueChanged(int nights);
     void on_roomTypeComboBox_currentIndexChanged(int index);
+    void testClientDatabase();
+    void checkClientTableStructure();
 
 private:
     Ui::MainWindow *ui;
@@ -86,6 +90,7 @@ private:
     void setupTableViewAppearance(QTableView *tableView);
     void updateDashboard();
     void exportToPdf();
+    void initializeDatabase();
 
 // Current reservation ID being edited (-1 for new reservation)
     int m_currentReservationId = -1;
@@ -95,6 +100,7 @@ private:
     void updateRoomDetails();
     void calculateTotalAmount();
     void updateNights();
+    void clearFilters();
 
     QLineSeries *m_currentYearSeries = nullptr;
     QLineSeries *m_previousYearSeries = nullptr;

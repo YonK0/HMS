@@ -5,9 +5,9 @@
 #include <QDate>
 #include <QList>
 #include "reservation.h"
-
+#include "dbmanager.h"
 // Forward declaration
-class DbManager;
+
 
 class ReservationModel : public QAbstractTableModel
 {
@@ -57,6 +57,8 @@ public:
 
     // Sorting
     void sortByName();
+
+    void refresh();
 
 private:
     QList<Reservation> m_reservations;

@@ -1,5 +1,4 @@
 #include "reservationModel.h"
-#include "dbmanager.h"
 #include <QColor>
 #include <QBrush>
 
@@ -9,13 +8,18 @@ ReservationModel::ReservationModel(QObject *parent)
     // Initialize the database manager
     m_dbManager = new DbManager("");
 
-    // Load all reservations from the database
-    loadReservationsFromDatabase();
+    // Load reservations if database connection is successful
+    if (m_dbManager && m_dbManager->isOpen()) {
+        loadReservationsFromDatabase();
+    } else {
+        qDebug() << "Failed to open database connection";
+    }
 }
 
 ReservationModel::~ReservationModel()
 {
     delete m_dbManager;
+    m_dbManager = nullptr;
 }
 
 int ReservationModel::rowCount(const QModelIndex &parent) const
@@ -204,16 +208,30 @@ void ReservationModel::filterReservations(const QString &searchText, int searchT
                                           const QString &roomType, const QString &status,
                                           const QString &country)
 {
-    // This could be implemented using SQL filtering in a more complex application
-    // For now, we'll reload all reservations and filter them in memory
+    // Begin reset to clear current data
+    beginResetModel();
+    m_reservations.clear();
 
-    // Reload all reservations
-    loadReservationsFromDatabase();
+    if (!m_dbManager || !m_dbManager->isOpen()) {
+        qDebug() << "Database connection issue. Cannot filter reservations.";
+        endResetModel();
+        return;
+    }
+
+    // Debug what criteria we're filtering with
+    qDebug() << "Filtering with criteria:";
+    qDebug() << "  Search text:" << searchText << "Type:" << searchType;
+    qDebug() << "  Date range:" << fromDate << "to" << toDate;
+    qDebug() << "  Room type:" << roomType;
+    qDebug() << "  Status:" << status;
+    qDebug() << "  Country:" << country;
+
+    // Get all reservations - we'll filter them in memory for simplicity
+    QList<Reservation> allReservations = m_dbManager->getAllReservations();
+    qDebug() << "Total reservations before filtering:" << allReservations.size();
 
     // Apply filters
-    QList<Reservation> filteredReservations;
-
-    for (const Reservation &reservation : m_reservations) {
+    for (const Reservation &reservation : allReservations) {
         bool matchesSearch = true;
         bool matchesDate = true;
         bool matchesRoomType = true;
@@ -223,48 +241,50 @@ void ReservationModel::filterReservations(const QString &searchText, int searchT
         // Apply search text filter
         if (!searchText.isEmpty()) {
             switch (searchType) {
-            case 0: // ID
+            case 1: // ID
                 matchesSearch = (QString::number(reservation.id()) == searchText);
                 break;
-            case 1: // Guest Name
+            case 2: // Guest Name
                 matchesSearch = reservation.guestName().contains(searchText, Qt::CaseInsensitive);
                 break;
-            case 2: // Room Number
+            case 3: // Room Number
                 matchesSearch = reservation.roomNumber().contains(searchText, Qt::CaseInsensitive);
                 break;
-            case 3: // Room Type
+            case 4: // Room Type
                 matchesSearch = reservation.roomType().contains(searchText, Qt::CaseInsensitive);
                 break;
-            case 4: // Country
+            case 5: // Country
                 matchesSearch = reservation.country().contains(searchText, Qt::CaseInsensitive);
                 break;
-            case 5: // Phone
+            case 6: // Phone
                 matchesSearch = reservation.phone().contains(searchText, Qt::CaseInsensitive);
                 break;
-            case 6: // Email
+            case 7: // Email
                 matchesSearch = reservation.email().contains(searchText, Qt::CaseInsensitive);
                 break;
-            case 7: // Check-in Date
-                matchesSearch = (reservation.checkInDate().toString("yyyy-MM-dd") == searchText);
+            case 8: // Check-in Date
+                if (fromDate.isValid() && toDate.isValid()) {
+                    matchesDate = (reservation.checkInDate() >= fromDate &&
+                                   reservation.checkInDate() <= toDate);
+                    // Skip other search text matching since we're using date range
+                    matchesSearch = true;
+                } else {
+                    matchesSearch = reservation.checkInDate().toString("yyyy-MM-dd").contains(searchText);
+                }
                 break;
-            case 8: // Check-out Date
-                matchesSearch = (reservation.checkOutDate().toString("yyyy-MM-dd") == searchText);
+            case 9: // Check-out Date
+                if (fromDate.isValid() && toDate.isValid()) {
+                    matchesDate = (reservation.checkOutDate() >= fromDate &&
+                                   reservation.checkOutDate() <= toDate);
+                    // Skip other search text matching since we're using date range
+                    matchesSearch = true;
+                } else {
+                    matchesSearch = reservation.checkOutDate().toString("yyyy-MM-dd").contains(searchText);
+                }
                 break;
             default:
                 break;
             }
-        }
-
-        // Apply date range filter if check-in date or check-out date is selected
-        if ((searchType == 7 || searchType == 8) && fromDate.isValid() && toDate.isValid()) {
-            QDate dateToCheck;
-            if (searchType == 7) { // Check-in Date
-                dateToCheck = reservation.checkInDate();
-            } else { // Check-out Date
-                dateToCheck = reservation.checkOutDate();
-            }
-
-            matchesDate = (dateToCheck >= fromDate && dateToCheck <= toDate);
         }
 
         // Apply room type filter
@@ -274,26 +294,15 @@ void ReservationModel::filterReservations(const QString &searchText, int searchT
 
         // Apply status filter
         if (status != "All Statuses") {
-            QString reservationStatus;
+            QString statusStr;
             switch (reservation.status()) {
-            case Reservation::Pending:
-                reservationStatus = "Pending";
-                break;
-            case Reservation::Confirmed:
-                reservationStatus = "Confirmed";
-                break;
-            case Reservation::CheckedIn:
-                reservationStatus = "Checked-in";
-                break;
-            case Reservation::Completed:
-                reservationStatus = "Completed";
-                break;
-            case Reservation::Cancelled:
-                reservationStatus = "Cancelled";
-                break;
+            case Reservation::Pending: statusStr = "Pending"; break;
+            case Reservation::Confirmed: statusStr = "Confirmed"; break;
+            case Reservation::CheckedIn: statusStr = "Checked-in"; break;
+            case Reservation::Completed: statusStr = "Completed"; break;
+            case Reservation::Cancelled: statusStr = "Cancelled"; break;
             }
-
-            matchesStatus = (reservationStatus == status);
+            matchesStatus = (statusStr == status);
         }
 
         // Apply country filter
@@ -303,14 +312,17 @@ void ReservationModel::filterReservations(const QString &searchText, int searchT
 
         // If all filters match, add to filtered list
         if (matchesSearch && matchesDate && matchesRoomType && matchesStatus && matchesCountry) {
-            filteredReservations.append(reservation);
+            m_reservations.append(reservation);
         }
     }
 
-    // Update the model with filtered data
-    beginResetModel();
-    m_reservations = filteredReservations;
+    qDebug() << "Total reservations after filtering:" << m_reservations.size();
+
+    // End reset to update views
     endResetModel();
+
+    // Emit dataChanged to update any other views
+    emit dataChanged(QModelIndex(), QModelIndex());
 }
 
 void ReservationModel::resetFilter()
@@ -330,4 +342,18 @@ void ReservationModel::sortByName()
               });
 
     endResetModel();
+}
+
+
+void ReservationModel::refresh()
+{
+    beginResetModel();
+    // Reload all reservations from the database
+    if (m_dbManager && m_dbManager->isOpen()) {
+        m_reservations = m_dbManager->getAllReservations();
+    }
+    endResetModel();
+
+    // Emit dataChanged to update any views
+    emit dataChanged(QModelIndex(), QModelIndex());
 }
